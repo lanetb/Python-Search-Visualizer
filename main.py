@@ -21,4 +21,14 @@ queue, visited = deque(), []
 path = []
 
 
+def main():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        
+        win.fill((0, 0, 0))
+        pygame.display.flip()
 
+main()
