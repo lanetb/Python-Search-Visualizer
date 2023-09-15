@@ -1,7 +1,7 @@
 import pygame, pygame_widgets, sys, queue
 from collections import deque
 from tkinter import messagebox, Tk
-from algos import dijk, a_star
+from algos import dijk, a_star, manhatten_heuristic, euclidean_heuristic
 from pygame_widgets.dropdown import Dropdown
 
 # Initialize pygame
@@ -19,7 +19,8 @@ h = (height - 50) // rows  # Subtract 50 for the GUI bar
 
 grid = []
 que = deque()
-p_que = queue.PriorityQueue()
+open_set = []
+closed_set = []
 path = []
 
 algorithm_type = "Dijkstra"
@@ -52,8 +53,7 @@ class Box:
         self.visited = False
         self.neighbors = []
         self.prior = None
-        self.cost = 0
-        self.reached = 0
+        self.f_cost, self.g_cost, self.h_cost = 0, 0, 0
 
     def draw(self, win, color, shape=True):
         if shape:
@@ -89,9 +89,9 @@ for col in range(cols):
 start_box = grid[0][0]
 start_box.start = True
 start_box.visited = True
-start_box.cost = 1
+heristic="euclidean"
 que.append(start_box)
-p_que.put((start_box.cost, start_box))
+open_set.append(start_box)
 
 # Main loop
 def main():
@@ -119,6 +119,11 @@ def main():
                     target_box.target = True
                     target_box_set = True
             elif event.type == pygame.KEYDOWN and target_box_set:
+                match heristic:
+                    case "manhatten":
+                        start_box.cost_f, start_box.cost_h = manhatten_heuristic(start_box, target_box), manhatten_heuristic(start_box, target_box)
+                    case "euclidean":
+                        start_box.cost_f, start_box.cost_h = euclidean_heuristic(start_box, target_box), euclidean_heuristic(start_box, target_box)
                 if event.key == pygame.K_SPACE:
                     begin_search = True
         if begin_search:
@@ -133,8 +138,8 @@ def main():
                                 messagebox.showinfo("Path Not Found", "There was no path to the target box")
                                 searching = False
                 case "A*":
-                        if not p_que.empty() and searching:
-                                searching = a_star(grid, p_que, target_box, start_box, path, heristic="manhatten")         
+                        if len(open_set) > 0 and searching:
+                                searching = a_star(grid, open_set, closed_set, target_box, start_box, path, heristic)         
                         else:
                             if searching:
                                 Tk().wm_withdraw()
@@ -153,12 +158,16 @@ def main():
                     box.draw(win, (0, 255, 150))
                 if box in path:
                     box.draw(win, (0, 150, 250))
-                if box.start:
-                    box.draw(win, (0, 200, 200))
                 if box.target:
                     box.draw(win, (200, 200, 0))
                 if box.wall:
                     box.draw(win, (150, 150, 150))
+                if box in closed_set:
+                    box.draw(win, (0, 255, 150))
+                if box in open_set:
+                    box.draw(win, (200, 150, 150), False)
+                if box.start:
+                    box.draw(win, (0, 200, 200))
 
         # Draw GUI
         pygame.draw.rect(win, gui_color, (0, 0, width, gui_height-5))
