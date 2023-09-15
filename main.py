@@ -2,7 +2,7 @@ import pygame, pygame_widgets, sys, queue
 from collections import deque
 from tkinter import messagebox, Tk
 from algos import dijk, a_star
-
+from pygame_widgets.dropdown import Dropdown
 
 # Initialize pygame
 size = (width, height) = (850, (480+50))
@@ -17,42 +17,28 @@ cols, rows = 85, 48
 w = width // cols
 h = (height - 50) // rows  # Subtract 50 for the GUI bar
 
-algorithm_type = "Dijkstra"
 grid = []
-match algorithm_type:
-    case "Dijkstra":
-        que = deque()
-    case "A*":
-        que = queue.PriorityQueue()
+que = deque()
+p_que = queue.PriorityQueue()
 path = []
+
+algorithm_type = "Dijkstra"
 
 # Define GUI variables
 gui_height = 50
 gui_color = (255, 255, 255)
-button_color = (0, 100, 200)
-button_hover_color = (0, 150, 255)
-button_font = pygame.font.Font(None, 36)
 
-# Create a Button class for the GUI
-class Button:
-    def __init__(self, text, x, y, width, height, command):
-        self.text = text
-        self.rect = pygame.Rect(x, y, width, height)
-        self.command = command
-        self.hovered = False
 
-    def draw(self):
-        color = button_hover_color if self.hovered else button_color
-        pygame.draw.rect(win, color, self.rect)
-        text = button_font.render(self.text, True, (255, 255, 255))
-        text_rect = text.get_rect(center=self.rect.center)
-        win.blit(text, text_rect)
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEMOTION:
-            self.hovered = self.rect.collidepoint(event.pos)
-        elif event.type == pygame.MOUSEBUTTONDOWN and self.hovered:
-            self.command()
+dropdown = Dropdown(
+    win, 5, 2.5, 150, 40 , name='Select Algorithm \/',
+    choices=[
+        'Dijkstra',
+        'A*',
+    ],
+    borderRadius=0, borderThickness = 10, borderColour = pygame.Color("Black"), 
+    inactiveColour=pygame.Color('white'), values=["Dijkstra", "A*"], direction='down', 
+    textHAlign='left',
+)
 
 # Creates the grid
 class Box:
@@ -66,9 +52,14 @@ class Box:
         self.visited = False
         self.neighbors = []
         self.prior = None
+        self.cost = 0
+        self.reached = 0
 
-    def draw(self, win, color):
-        pygame.draw.rect(win, color, (self.x * w, self.y * h + gui_height, w-2, h-2))
+    def draw(self, win, color, shape=True):
+        if shape:
+            pygame.draw.rect(win, color, (self.x * w, self.y * h + gui_height, w-2, h-2))
+        else:
+            pygame.draw.circle(win, color, (self.x * w + w // 2.5, self.y * h + h // 2.5 + gui_height), w // 3)
 
     def set_neighbors(self):
         if self.x > 0:
@@ -79,6 +70,9 @@ class Box:
             self.neighbors.append(grid[self.x][self.y - 1])
         if self.y < rows - 1:
             self.neighbors.append(grid[self.x][self.y + 1])
+
+    def get_cost(self):
+        return self.cost
 
 # ... (rest of your Box class)
 
@@ -95,17 +89,20 @@ for col in range(cols):
 start_box = grid[0][0]
 start_box.start = True
 start_box.visited = True
+start_box.cost = 1
 que.append(start_box)
+p_que.put((start_box.cost, start_box))
 
 # Main loop
 def main():
     begin_search = False
     target_box_set = False
-    searching = True
     target_box = None
+    searching = True
 
     while True:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -124,27 +121,25 @@ def main():
             elif event.type == pygame.KEYDOWN and target_box_set:
                 if event.key == pygame.K_SPACE:
                     begin_search = True
-
         if begin_search:
-            if len(que) > 0 and searching:
-                current_box = que.popleft()
-                current_box.visited = True
-                if current_box == target_box:
-                    searching = False
-                    while current_box.prior != start_box:
-                        path.append(current_box.prior)
-                        current_box = current_box.prior
-                else:
-                    match algorithm_type:
-                        case "Dijkstra": 
-                            dijk(grid, current_box, que)
-                        case "A*":
-                            a_star(grid, current_box, que, target_box, heristic="manhatten")
-            else:
-                if searching:
-                    Tk().wm_withdraw()
-                    messagebox.showinfo("Path Not Found", "There was no path to the target box")
-                    searching = False
+            algorithm_type = dropdown.getSelected()
+            match algorithm_type:
+                case "Dijkstra": 
+                        if len(que) > 0 and searching:
+                                searching = dijk(grid, que, target_box, path, start_box)          
+                        else:
+                            if searching:
+                                Tk().wm_withdraw()
+                                messagebox.showinfo("Path Not Found", "There was no path to the target box")
+                                searching = False
+                case "A*":
+                        if not p_que.empty() and searching:
+                                searching = a_star(grid, p_que, target_box, start_box, path, heristic="manhatten")         
+                        else:
+                            if searching:
+                                Tk().wm_withdraw()
+                                messagebox.showinfo("Path Not Found", "There was no path to the target box")
+                                searching = False
 
         win.fill((0, 0, 0))
 
@@ -153,11 +148,11 @@ def main():
                 box = grid[col][row]
                 box.draw(win, (55, 55, 55))
                 if box.queued:
-                    box.draw(win, (200, 0, 0))
+                    box.draw(win, (200, 150, 150), False)
                 if box.visited:
-                    box.draw(win, (0, 255, 0))
+                    box.draw(win, (0, 255, 150))
                 if box in path:
-                    box.draw(win, (0, 0, 200))
+                    box.draw(win, (0, 150, 250))
                 if box.start:
                     box.draw(win, (0, 200, 200))
                 if box.target:
@@ -167,6 +162,7 @@ def main():
 
         # Draw GUI
         pygame.draw.rect(win, gui_color, (0, 0, width, gui_height-5))
+        pygame_widgets.update(events)
 
         pygame.display.flip()
 
