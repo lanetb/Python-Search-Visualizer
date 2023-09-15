@@ -42,7 +42,7 @@ def a_star(grid, open_set, closed_set, target_box, start_box, path, heristic):
         return False
     else:
         for neighbor in current_box.neighbors:
-            if neighbor.wall or neighbor in closed_set:
+            if neighbor.wall or neighbor in closed_set or neighbor.visited:
                 continue
             neighbor.g_cost = current_box.f_cost + 1
             if neighbor in open_set and neighbor.g_cost >= current_box.g_cost + current_box.h_cost:
