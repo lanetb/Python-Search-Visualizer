@@ -27,11 +27,12 @@ def a_star(grid, open_set, closed_set, target_box, start_box, path, heristic):
     winner = 0
 
     for i in range(len(open_set)):
-        if open_set[i].g_cost + open_set[i].h_cost < open_set[winner].g_cost + open_set[winner].h_cost:
+        if open_set[i].f_cost < open_set[winner].f_cost:
             winner = i
     
     current_box = open_set[winner]
     open_set.remove(current_box)
+    closed_set.append(current_box)
     current_box.visited = True
 
     if current_box == target_box:
@@ -42,22 +43,17 @@ def a_star(grid, open_set, closed_set, target_box, start_box, path, heristic):
         return False
     else:
         for neighbor in current_box.neighbors:
-            if neighbor.wall or neighbor in closed_set or neighbor.visited:
+            if neighbor.wall or neighbor in closed_set:
                 continue
-            neighbor.g_cost = current_box.f_cost + 1
-            if neighbor in open_set and neighbor.g_cost >= current_box.g_cost + current_box.h_cost:
-                break
-            #elif neighbor in closed_set and neighbor.g_cost >= current_box.g_cost + current_box.h_cost:
-            #    closed_set.remove(neighbor)
-            #    open_set.append(neighbor)
-            #    break
-            else:
-                neighbor.prior= current_box
+            if neighbor not in open_set and current_box.g_cost >= neighbor.g_cost:
+                neighbor.prior = current_box
                 match heristic:
                     case "manhatten":
                         neighbor.h_cost = manhatten_heuristic(neighbor, target_box)
                     case "euclidean":
                         neighbor.h_cost = euclidean_heuristic(neighbor, target_box)
-                open_set.append(neighbor)
-        closed_set.append(current_box)
+                neighbor.g_cost = current_box.g_cost + 1
+                neighbor.f_cost = neighbor.g_cost + neighbor.h_cost
+                if neighbor not in open_set:
+                    open_set.append(neighbor)
         return True

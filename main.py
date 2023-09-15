@@ -41,6 +41,17 @@ dropdown = Dropdown(
     textHAlign='left',
 )
 
+dropdown2 = Dropdown(
+    win, 155, 2.5, 150, 40 , name='Select Heristic \/',
+    choices=[
+        'Manhatten',
+        'Euclidean',
+    ],
+    borderRadius=0, borderThickness = 10, borderColour = pygame.Color("Black"), 
+    inactiveColour=pygame.Color('white'), values=["manhatten", "euclidean"], direction='down', 
+    textHAlign='left',
+)
+
 # Creates the grid
 class Box:
     def __init__(self, x, y):
@@ -89,7 +100,7 @@ for col in range(cols):
 start_box = grid[0][0]
 start_box.start = True
 start_box.visited = True
-heristic="euclidean"
+heristic=dropdown2.getSelected()
 que.append(start_box)
 open_set.append(start_box)
 
@@ -102,6 +113,7 @@ def main():
 
     while True:
         events = pygame.event.get()
+        heristic=dropdown2.getSelected()
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -156,18 +168,18 @@ def main():
                     box.draw(win, (200, 150, 150), False)
                 if box.visited:
                     box.draw(win, (0, 255, 150))
-                if box in path:
-                    box.draw(win, (0, 150, 250))
-                if box.target:
-                    box.draw(win, (200, 200, 0))
                 if box.wall:
                     box.draw(win, (150, 150, 150))
                 if box in closed_set:
                     box.draw(win, (0, 255, 150))
                 if box in open_set:
                     box.draw(win, (200, 150, 150), False)
+                if box in path:
+                    box.draw(win, (0, 150, 250))
                 if box.start:
                     box.draw(win, (0, 200, 200))
+                if box.target:
+                    box.draw(win, (200, 200, 0))
 
         # Draw GUI
         pygame.draw.rect(win, gui_color, (0, 0, width, gui_height-5))
