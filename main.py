@@ -1,9 +1,8 @@
-import pygame
-import sys
+import pygame, pygame_widgets, sys, queue
 from collections import deque
 from tkinter import messagebox, Tk
 from algos import dijk, a_star
-import queue
+
 
 # Initialize pygame
 size = (width, height) = (850, (480+50))
@@ -168,7 +167,6 @@ def main():
 
         # Draw GUI
         pygame.draw.rect(win, gui_color, (0, 0, width, gui_height-5))
-
 
         pygame.display.flip()
 
