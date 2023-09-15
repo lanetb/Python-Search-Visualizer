@@ -23,7 +23,7 @@ open_set = []
 closed_set = []
 path = []
 
-algorithm_type = "Dijkstra"
+
 
 # Define GUI variables
 gui_height = 50
@@ -100,9 +100,10 @@ for col in range(cols):
 start_box = grid[0][0]
 start_box.start = True
 start_box.visited = True
-heristic=dropdown2.getSelected()
 que.append(start_box)
 open_set.append(start_box)
+heristic = "manhatten"
+algorithm_type = "A*"
 
 # Main loop
 def main():
@@ -112,8 +113,8 @@ def main():
     searching = True
 
     while True:
+        algorithm_type = dropdown.getSelected()
         events = pygame.event.get()
-        heristic=dropdown2.getSelected()
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -131,6 +132,7 @@ def main():
                     target_box.target = True
                     target_box_set = True
             elif event.type == pygame.KEYDOWN and target_box_set:
+                heristic=dropdown2.getSelected()
                 match heristic:
                     case "manhatten":
                         start_box.cost_f, start_box.cost_h = manhatten_heuristic(start_box, target_box), manhatten_heuristic(start_box, target_box)
@@ -139,7 +141,6 @@ def main():
                 if event.key == pygame.K_SPACE:
                     begin_search = True
         if begin_search:
-            algorithm_type = dropdown.getSelected()
             match algorithm_type:
                 case "Dijkstra": 
                         if len(que) > 0 and searching:
