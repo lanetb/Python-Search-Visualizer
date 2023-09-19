@@ -3,6 +3,7 @@ from collections import deque
 from tkinter import messagebox, Tk
 from algos import dijk, a_star, manhatten_heuristic, euclidean_heuristic
 from pygame_widgets.dropdown import Dropdown
+from pygame_widgets.button import Button
 from itertools import count
 
 # Initialize pygame
@@ -24,11 +25,9 @@ p_que = queue.PriorityQueue()
 path = []
 
 
-
 # Define GUI variables
 gui_height = 50
 gui_color = (255, 255, 255)
-
 
 dropdown = Dropdown(
     win, 5, 2.5, 150, 40 , name='Select Algorithm \/',
@@ -106,6 +105,10 @@ p_que.put((0, next(unique), start_box))
 heristic = "manhatten"
 algorithm_type = "A*"
 
+def rest_p_que():
+    while not p_que.empty():
+        p_que.get()
+    p_que.put((0, next(unique), start_box))
 
 # Main loop
 def main():
@@ -113,6 +116,39 @@ def main():
     target_box_set = False
     target_box = None
     searching = True
+
+    def reset_begin_search():
+        nonlocal begin_search
+        begin_search = False
+
+    def reset_searching():
+        nonlocal searching
+        searching = True
+
+    def reset_search():
+        reset_searching()
+        reset_begin_search()
+        path.clear()
+        que.clear()
+        que.append(start_box)
+        rest_p_que()
+        for col in range(cols):
+            for row in range(rows):
+                if not grid[col][row].wall:
+                    grid[col][row].visited = False
+                    grid[col][row].queued = False
+                    grid[col][row].prior = None
+                    grid[col][row].f_cost = 0
+                    grid[col][row].g_cost = 0
+                    grid[col][row].h_cost = 0
+        
+                
+
+    button = Button(
+        win, 745, 2.5, 100, 40, text='reset search',
+        inactiveColour=pygame.Color('red'), hoverColour=pygame.Color('orange') ,pressedColour=pygame.Color('red'),
+        onClick=lambda: reset_search(),
+    )
 
     while True:
         algorithm_type = dropdown.getSelected()
