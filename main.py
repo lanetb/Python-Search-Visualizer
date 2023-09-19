@@ -3,6 +3,7 @@ from collections import deque
 from tkinter import messagebox, Tk
 from algos import dijk, a_star, manhatten_heuristic, euclidean_heuristic
 from pygame_widgets.dropdown import Dropdown
+from itertools import count
 
 # Initialize pygame
 size = (width, height) = (850, (480+50))
@@ -19,8 +20,7 @@ h = (height - 50) // rows  # Subtract 50 for the GUI bar
 
 grid = []
 que = deque()
-open_set = []
-closed_set = []
+p_que = queue.PriorityQueue()
 path = []
 
 
@@ -100,10 +100,12 @@ for col in range(cols):
 start_box = grid[0][0]
 start_box.start = True
 start_box.visited = True
+unique = count()
 que.append(start_box)
-open_set.append(start_box)
+p_que.put((0, next(unique), start_box))
 heristic = "manhatten"
 algorithm_type = "A*"
+
 
 # Main loop
 def main():
@@ -151,8 +153,8 @@ def main():
                                 messagebox.showinfo("Path Not Found", "There was no path to the target box")
                                 searching = False
                 case "A*":
-                        if len(open_set) > 0 and searching:
-                                searching = a_star(grid, open_set, closed_set, target_box, start_box, path, heristic)         
+                        if not p_que.empty() and searching:
+                                searching = a_star(grid, p_que, unique, target_box, start_box, path, heristic)         
                         else:
                             if searching:
                                 Tk().wm_withdraw()
@@ -171,10 +173,6 @@ def main():
                     box.draw(win, (0, 255, 150))
                 if box.wall:
                     box.draw(win, (150, 150, 150))
-                if box in closed_set:
-                    box.draw(win, (0, 255, 150))
-                if box in open_set:
-                    box.draw(win, (200, 150, 150), False)
                 if box in path:
                     box.draw(win, (0, 150, 250))
                 if box.start:
