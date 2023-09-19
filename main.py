@@ -157,6 +157,7 @@ def main():
     
     def start_search():
         if target_box_set:
+            nonlocal heristic
             heristic=dropdown2.getSelected()
             match heristic:
                 case "manhatten":
