@@ -140,14 +140,48 @@ def main():
                     grid[col][row].prior = None
                     grid[col][row].f_cost = 0
                     grid[col][row].g_cost = 0
-                    grid[col][row].h_cost = 0
-        
-                
+                    grid[col][row].h_cost = 0    
+
+    def reset_full():
+        reset_search()
+        nonlocal target_box_set
+        target_box_set = False
+        nonlocal target_box
+        target_box = None
+        for col in range(cols):
+            for row in range(rows):
+                grid[col][row].wall = False
+                grid[col][row].target = False
+        start_box.start = True
+        start_box.visited = True 
+    
+    def start_search():
+        if target_box_set:
+            heristic=dropdown2.getSelected()
+            match heristic:
+                case "manhatten":
+                    start_box.cost_f, start_box.cost_h = manhatten_heuristic(start_box, target_box), manhatten_heuristic(start_box, target_box)
+                case "euclidean":
+                    start_box.cost_f, start_box.cost_h = euclidean_heuristic(start_box, target_box), euclidean_heuristic(start_box, target_box)
+            nonlocal begin_search
+            begin_search = True
 
     button = Button(
-        win, 745, 2.5, 100, 40, text='reset search',
-        inactiveColour=pygame.Color('red'), hoverColour=pygame.Color('orange') ,pressedColour=pygame.Color('red'),
+        win, 640, 2.5, 100, 40, text='reset search',
+        inactiveColour=pygame.Color('red'), hoverColour=pygame.Color('darkred') ,pressedColour=pygame.Color('red'),
         onClick=lambda: reset_search(),
+    )
+
+    button2 = Button(
+        win, 745, 2.5, 100, 40, text='reset full',
+        inactiveColour=pygame.Color('red'), hoverColour=pygame.Color('darkred') ,pressedColour=pygame.Color('red'),
+        onClick=lambda: reset_full(),
+    )
+
+    button3 = Button(
+        win, 535, 2.5, 100, 40, text='start search',
+        inactiveColour=pygame.Color('green'), hoverColour=pygame.Color('darkgreen') ,pressedColour=pygame.Color('green'),
+        onClick=lambda: start_search(),
     )
 
     while True:
