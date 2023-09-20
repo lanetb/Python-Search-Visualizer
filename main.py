@@ -191,7 +191,7 @@ def main():
     button4 = Button(
             win, 430, 2.5, 100, 40, text='create maze',
             inactiveColour=pygame.Color('blue'), hoverColour=pygame.Color('darkblue') ,pressedColour=pygame.Color('blue'),
-            onClick=lambda x, y: create_maze(x, y), onClickParams=(grid, win),
+            onClick=lambda x, y: (reset_full(), create_maze(x, y)), onClickParams=(grid, win),
         )
     
     while True:
@@ -259,7 +259,6 @@ def main():
                     box.draw(win, (0, 200, 200))
                 if box.target:
                     box.draw(win, (200, 200, 0))
-        
         # Draw GUI
         pygame.draw.rect(win, gui_color, (0, 0, width, gui_height-5))
         pygame_widgets.update(events)
