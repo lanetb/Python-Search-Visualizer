@@ -237,13 +237,13 @@ def main():
         for col in range(cols):
             for row in range(rows):
                 box = grid[col][row]
-                box.draw(win, (55, 55, 55))
+                box.draw(win, (100, 100, 100))
                 if box.queued:
                     box.draw(win, (200, 150, 150), False)
                 if box.visited:
                     box.draw(win, (0, 255, 150))
                 if box.wall:
-                    box.draw(win, (150, 150, 150))
+                    box.draw(win, (20, 20, 20))
                 if box in path:
                     box.draw(win, (0, 150, 250))
                 if box.start:
