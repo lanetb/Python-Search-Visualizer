@@ -8,7 +8,7 @@ from itertools import count
 from maze import create_maze
 
 # Initialize pygame
-size = (width, height) = (860, (480+50))
+size = (width, height) = (860*2, (480*2+50))
 pygame.init()
 
 # Create screen
@@ -51,8 +51,6 @@ dropdown2 = Dropdown(
     inactiveColour=pygame.Color('white'), values=["manhatten", "euclidean"], direction='down', 
     textHAlign='left',
 )
-
-
 
 # Creates the grid
 class Box:
@@ -119,6 +117,7 @@ def main():
     target_box_set = False
     target_box = None
     searching = True
+    running = True
 
     def reset_begin_search():
         nonlocal begin_search
@@ -191,10 +190,14 @@ def main():
     button4 = Button(
             win, 430, 2.5, 100, 40, text='create maze',
             inactiveColour=pygame.Color('blue'), hoverColour=pygame.Color('darkblue') ,pressedColour=pygame.Color('blue'),
-            onClick=lambda x, y: (reset_full(), create_maze(x, y)), onClickParams=(grid, win),
-        )
+            onClick=lambda x, y,z, a: (set_running(z), reset_full(), create_maze(x, y), set_running(a)), onClickParams=(grid, win, False, True),
+    )
+
+    def set_running(var):
+        nonlocal running
+        running = var
     
-    while True:
+    while running:
         algorithm_type = dropdown.getSelected()
         events = pygame.event.get()
         for event in events:

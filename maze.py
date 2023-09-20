@@ -1,7 +1,8 @@
 import random
 import pygame
+import sys
 
-path = []
+path = set()
 
 def create_maze(grid, win):
     start_pos = grid[0][0]
@@ -10,18 +11,23 @@ def create_maze(grid, win):
 
 
 def all_walls(grid, start_pos):
-    walls = []
+    walls = set()
     for cols in range(len(grid)):
         for rows in range(len(grid[0])):
             if not grid[cols][rows] == start_pos:
                 grid[cols][rows].wall = True
-                walls.append(grid[cols][rows])
+                walls.add(grid[cols][rows])
     return walls
 
 def recursive_dfs(grid, walls, position, win):
     moves_avalible = ['up', 'down', 'left', 'right']
     x, y = position.x, position.y
-    while moves_avalible:
+    while len(moves_avalible) > 0:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
         random_move = random.choice(moves_avalible)
         moves_avalible.remove(random_move)
         x_temp, y_temp = x, y
@@ -57,8 +63,8 @@ def recursive_dfs(grid, walls, position, win):
                         box.draw(win, (0, 150, 150))
             new_pos.draw(win, (150, 0, 50))
 
-            path.append(new_pos)
-            path.append(middle_wall)
+            path.add(new_pos)
+            path.add(middle_wall)
             walls.remove(middle_wall)
             recursive_dfs(grid, walls, new_pos, win)
             path.remove(new_pos)
