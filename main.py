@@ -52,11 +52,7 @@ dropdown2 = Dropdown(
     textHAlign='left',
 )
 
-button4 = Button(
-        win, 430, 2.5, 100, 40, text='create maze',
-        inactiveColour=pygame.Color('blue'), hoverColour=pygame.Color('darkblue') ,pressedColour=pygame.Color('blue'),
-        onClick=lambda x: create_maze(x), onClickParams=(grid,),
-    )
+
 
 # Creates the grid
 class Box:
@@ -192,6 +188,12 @@ def main():
         onClick=lambda: start_search(),
     )
 
+    button4 = Button(
+            win, 430, 2.5, 100, 40, text='create maze',
+            inactiveColour=pygame.Color('blue'), hoverColour=pygame.Color('darkblue') ,pressedColour=pygame.Color('blue'),
+            onClick=lambda x, y: create_maze(x, y), onClickParams=(grid, win),
+        )
+    
     while True:
         algorithm_type = dropdown.getSelected()
         events = pygame.event.get()
@@ -257,7 +259,7 @@ def main():
                     box.draw(win, (0, 200, 200))
                 if box.target:
                     box.draw(win, (200, 200, 0))
-
+        
         # Draw GUI
         pygame.draw.rect(win, gui_color, (0, 0, width, gui_height-5))
         pygame_widgets.update(events)
