@@ -7,7 +7,7 @@ from pygame_widgets.button import Button
 from itertools import count
 
 # Initialize pygame
-size = (width, height) = (850, (480+50))
+size = (width, height) = (860, (480+50))
 pygame.init()
 
 # Create screen
@@ -15,7 +15,7 @@ win = pygame.display.set_mode(size)
 pygame.display.set_caption("Pathfinding")
 clock = pygame.time.Clock()
 
-cols, rows = 85, 48
+cols, rows = 86, 48
 w = width // cols
 h = (height - 50) // rows  # Subtract 50 for the GUI bar
 
