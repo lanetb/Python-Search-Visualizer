@@ -53,24 +53,27 @@ def recursive_dfs(grid, walls, position, win):
 
             middle_wall = grid[position.x + x_diff // 2][position.y + y_diff // 2]
             middle_wall.wall = False
+            walls.remove(middle_wall)
             for cols in range(len(grid)):
                 for rows in range(len(grid[0])):
                     box = grid[cols][rows]
-                    box.draw(win, (100, 100, 100))
+                    box.draw(win, (20, 20, 20))
                     if box.wall:
-                        box.draw(win, (20, 20, 20))
-                    if box in path:
-                        box.draw(win, (0, 150, 150))
+                        box.draw(win, (75, 75, 75))
+                    if box in path and box not in walls:
+                        box.draw(win, (0, 75, 150))
             new_pos.draw(win, (150, 0, 50))
+            middle_wall.draw(win, (0, 75, 150))
 
             path.add(new_pos)
             path.add(middle_wall)
-            walls.remove(middle_wall)
+            pygame.display.flip()
             recursive_dfs(grid, walls, new_pos, win)
             path.remove(new_pos)
             path.remove(middle_wall)
             new_pos.draw(win, (100, 100, 100))
             middle_wall.draw(win, (100, 100, 100))
-        pygame.display.flip()
+            pygame.display.flip()
+        
 
     return

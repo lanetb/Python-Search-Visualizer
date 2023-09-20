@@ -6,6 +6,9 @@ from pygame_widgets.dropdown import Dropdown
 from pygame_widgets.button import Button
 from itertools import count
 from maze import create_maze
+import sys
+
+sys.setrecursionlimit(5000)
 
 # Initialize pygame
 size = (width, height) = (860*2, (480*2+50))
@@ -16,7 +19,7 @@ win = pygame.display.set_mode(size)
 pygame.display.set_caption("Pathfinding")
 clock = pygame.time.Clock()
 
-cols, rows = 86, 48
+cols, rows = 86*2, 48*2
 w = width // cols
 h = (height - 50) // rows  # Subtract 50 for the GUI bar
 
@@ -249,13 +252,13 @@ def main():
         for col in range(cols):
             for row in range(rows):
                 box = grid[col][row]
-                box.draw(win, (100, 100, 100))
+                box.draw(win, (20, 20, 20))
                 if box.queued:
                     box.draw(win, (200, 150, 150), False)
                 if box.visited:
                     box.draw(win, (0, 255, 150))
                 if box.wall:
-                    box.draw(win, (20, 20, 20))
+                    box.draw(win, (75, 75, 75))
                 if box in path:
                     box.draw(win, (0, 150, 250))
                 if box.start:
