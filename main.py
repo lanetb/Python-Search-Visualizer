@@ -5,6 +5,7 @@ from algos import dijk, a_star, manhatten_heuristic, euclidean_heuristic
 from pygame_widgets.dropdown import Dropdown
 from pygame_widgets.button import Button
 from itertools import count
+from maze import create_maze
 
 # Initialize pygame
 size = (width, height) = (860, (480+50))
@@ -50,6 +51,12 @@ dropdown2 = Dropdown(
     inactiveColour=pygame.Color('white'), values=["manhatten", "euclidean"], direction='down', 
     textHAlign='left',
 )
+
+button4 = Button(
+        win, 430, 2.5, 100, 40, text='create maze',
+        inactiveColour=pygame.Color('blue'), hoverColour=pygame.Color('darkblue') ,pressedColour=pygame.Color('blue'),
+        onClick=lambda x: create_maze(x), onClickParams=(grid,),
+    )
 
 # Creates the grid
 class Box:
