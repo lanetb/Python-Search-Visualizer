@@ -11,7 +11,7 @@ import sys
 sys.setrecursionlimit(5000)
 
 # Initialize pygame
-size = (width, height) = (860*2, (480*2+50))
+size = (width, height) = (860, (480+25))
 pygame.init()
 
 # Create screen
@@ -19,9 +19,9 @@ win = pygame.display.set_mode(size)
 pygame.display.set_caption("Pathfinding")
 clock = pygame.time.Clock()
 
-cols, rows = 86*2, 48*2
+cols, rows = 86, 48
 w = width // cols
-h = (height - 50) // rows  # Subtract 50 for the GUI bar
+h = (height - 25) // rows  # Subtract 50 for the GUI bar
 
 grid = []
 que = deque()
@@ -30,11 +30,11 @@ path = []
 
 
 # Define GUI variables
-gui_height = 50
-gui_color = (255, 255, 255)
+gui_height = 25
+gui_color = (200, 200, 200)
 
 dropdown = Dropdown(
-    win, 5, 2.5, 150, 40 , name='Select Algorithm \/',
+    win, 5, 2.5, 150, 15, name='Select Algorithm \/',
     choices=[
         'Dijkstra',
         'A*',
@@ -45,7 +45,7 @@ dropdown = Dropdown(
 )
 
 dropdown2 = Dropdown(
-    win, 155, 2.5, 150, 40 , name='Select Heristic \/',
+    win, 160, 2.5, 150, 15, name='Select Heristic \/',
     choices=[
         'Manhatten',
         'Euclidean',
@@ -103,7 +103,7 @@ for col in range(cols):
 start_box = grid[0][0]
 start_box.start = True
 start_box.visited = True
-unique = count()
+unique = count(0,-1)
 que.append(start_box)
 p_que.put((0, next(unique), start_box))
 heristic = "manhatten"
@@ -173,25 +173,25 @@ def main():
             begin_search = True
 
     button = Button(
-        win, 640, 2.5, 100, 40, text='reset search',
+        win, 640, 2.5, 100, 15, text='reset search',
         inactiveColour=pygame.Color('red'), hoverColour=pygame.Color('darkred') ,pressedColour=pygame.Color('red'),
         onClick=lambda: reset_search(),
     )
 
     button2 = Button(
-        win, 745, 2.5, 100, 40, text='reset full',
+        win, 745, 2.5, 100, 15, text='reset full',
         inactiveColour=pygame.Color('red'), hoverColour=pygame.Color('darkred') ,pressedColour=pygame.Color('red'),
         onClick=lambda: reset_full(),
     )
 
     button3 = Button(
-        win, 535, 2.5, 100, 40, text='start search',
+        win, 535, 2.5, 100, 15, text='start search',
         inactiveColour=pygame.Color('green'), hoverColour=pygame.Color('darkgreen') ,pressedColour=pygame.Color('green'),
         onClick=lambda: start_search(),
     )
 
     button4 = Button(
-            win, 430, 2.5, 100, 40, text='create maze',
+            win, 430, 2.5, 100, 15, text='create maze',
             inactiveColour=pygame.Color('blue'), hoverColour=pygame.Color('darkblue') ,pressedColour=pygame.Color('blue'),
             onClick=lambda x, y,z, a: (set_running(z), reset_full(), create_maze(x, y), set_running(a)), onClickParams=(grid, win, False, True),
     )
