@@ -19,7 +19,7 @@ win = pygame.display.set_mode(size)
 pygame.display.set_caption("Pathfinding")
 clock = pygame.time.Clock()
 
-cols, rows = 86, 48
+cols, rows = 86*2, 48*2
 w = width // cols
 h = (height - 25) // rows  # Subtract 50 for the GUI bar
 
@@ -27,7 +27,6 @@ grid = []
 que = deque()
 p_que = queue.PriorityQueue()
 path = []
-
 
 # Define GUI variables
 gui_height = 25

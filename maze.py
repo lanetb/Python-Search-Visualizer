@@ -9,7 +9,6 @@ def create_maze(grid, win):
     walls = all_walls(grid, start_pos)
     recursive_dfs(grid, walls, start_pos, win)
 
-
 def all_walls(grid, start_pos):
     walls = set()
     for cols in range(len(grid)):
@@ -75,5 +74,4 @@ def recursive_dfs(grid, walls, position, win):
             middle_wall.draw(win, (100, 100, 100))
             pygame.display.flip()
         
-
     return
